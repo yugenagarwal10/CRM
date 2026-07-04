@@ -1,0 +1,79 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    font-size: 17.5px;
+    --background: 220 20% 97%;
+    --foreground: 224 71% 4%;
+    --card: 0 0% 100%;
+    --card-foreground: 224 71% 4%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --primary: 235 85% 65%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 9% 46%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 235 85% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --ring: 235 85% 65%;
+    --radius: 0.75rem;
+
+    /* Sidebar */
+    --sidebar-bg: 228 45% 10%;
+    --sidebar-fg: 220 20% 85%;
+    --sidebar-hover: 228 45% 16%;
+    --sidebar-active: 235 85% 65%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Outfit', sans-serif;
+  }
+
+  input, textarea, button, select {
+    font-family: 'Outfit', sans-serif;
+  }
+}
+
+/* Kanban drag-over highlight */
+.kanban-col-dragover {
+  @apply ring-2 ring-primary/50 bg-primary/5;
+}
+
+/* Kanban drag-ghost opacity */
+[draggable='true']:active {
+  opacity: 0.7;
+  cursor: grabbing;
+}
+
+/* line-clamp fallback */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full;
+}
