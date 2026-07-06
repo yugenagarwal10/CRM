@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Briefcase, Mail, Lock, User, AlertTriangle, Eye, EyeOff } from 'lucide-react';
+import MCTCLogo from '../components/MCTCLogo';
 
 export default function Login() {
   const { login, register, isAuthenticated } = useAuth();
@@ -78,11 +79,9 @@ export default function Login() {
         
         {/* Logo/Branding */}
         <div className="flex flex-col items-center text-center">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-lg shadow-indigo-200 mb-3">
-            <Briefcase className="w-6 h-6 text-white" />
-          </div>
+          <MCTCLogo size="lg" className="mb-3" />
           <h2 className="text-2xl font-black text-gray-800 dark:text-zinc-100 tracking-tight leading-snug">
-            Welcome to Lead CRM
+            Welcome to CRM
           </h2>
           <p className="text-xs text-gray-400 font-semibold mt-1">
             {isRegister ? 'Create an account to get started' : 'Sign in to access your sales workspace'}

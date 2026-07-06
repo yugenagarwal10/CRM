@@ -1,7 +1,21 @@
 import { useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
-import { LayoutDashboard, Users, Briefcase, Menu, X, LogOut, Settings as SettingsIcon, ChevronDown, Kanban, Sliders, BarChart3, TextAlignJustify } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Briefcase,
+  Menu,
+  X,
+  LogOut,
+  Settings as SettingsIcon,
+  ChevronDown,
+  Kanban,
+  Sliders,
+  BarChart3,
+  TextAlignJustify,
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext";
+import MCTCLogo from "./MCTCLogo";
 
 const navItems = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -13,7 +27,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
-  const [isSettingsOpen, setIsSettingsOpen] = useState(location.pathname.startsWith('/settings'));
+  const [isSettingsOpen, setIsSettingsOpen] = useState(
+    location.pathname.startsWith("/settings"),
+  );
   const { user, logout } = useAuth();
 
   const toggleMobileSidebar = () => {
@@ -28,17 +44,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-[#F4F6FB]">
       {/* ── Mobile Top Header ── */}
       <header className="flex md:hidden items-center justify-between px-4 py-3.5 bg-white border-b border-gray-100 shrink-0 z-30 shadow-sm">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md">
-            <Briefcase className="w-3.5 h-3.5 text-white" />
-          </div>
-          <div>
-            <p className="text-xs font-bold text-gray-800 leading-tight">
-              Lead CRM
-            </p>
-            <p className="text-[9px] text-gray-400">Sales Workspace</p>
-          </div>
-        </div>
+        <MCTCLogo size="sm" />
         <button
           onClick={toggleMobileSidebar}
           className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-600 focus:outline-none"
@@ -60,17 +66,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
           <aside className="relative flex flex-col w-64 max-w-[80vw] bg-white h-full p-5 shadow-2xl z-10 animate-in slide-in-from-left duration-200">
             {/* Close Button & Header */}
             <div className="flex items-center justify-between pb-5 border-b border-gray-150 mb-5">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center shadow-md">
-                  <Briefcase className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-[16px] font-extrabold text-gray-800 leading-tight">
-                    Lead CRM
-                  </p>
-                  <p className="text-[12px] font-semibold text-gray-400">Sales Workspace</p>
-                </div>
-              </div>
+              <MCTCLogo size="md" />
               <button
                 onClick={closeMobileSidebar}
                 className="p-1.5 rounded-lg hover:bg-gray-100 text-gray-500 hover:text-gray-800"
@@ -127,7 +123,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                   type="button"
                   onClick={() => setIsSettingsOpen(!isSettingsOpen)}
                   className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[16px] font-bold transition-all duration-150 group ${
-                    location.pathname.startsWith('/settings')
+                    location.pathname.startsWith("/settings")
                       ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/20"
                       : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
                   }`}
@@ -138,7 +134,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                     </span>
                     Master Settings
                   </div>
-                  <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isSettingsOpen ? 'rotate-180' : ''}`} />
+                  <ChevronDown
+                    className={`w-4 h-4 transition-transform duration-200 ${isSettingsOpen ? "rotate-180" : ""}`}
+                  />
                 </button>
 
                 {isSettingsOpen && (
@@ -181,11 +179,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             <div className="mt-auto pt-5 border-t border-gray-100 flex flex-col gap-3">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-black shadow-md select-none">
-                  {user?.name ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'U'}
+                  {user?.name
+                    ? user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .slice(0, 2)
+                        .join("")
+                        .toUpperCase()
+                    : "U"}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold text-gray-800 truncate leading-tight">{user?.name || 'User'}</p>
-                  <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5 text-ellipsis">{user?.email || ''}</p>
+                  <p className="text-xs font-bold text-gray-800 truncate leading-tight">
+                    {user?.name || "User"}
+                  </p>
+                  <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5 text-ellipsis">
+                    {user?.email || ""}
+                  </p>
                 </div>
               </div>
               <button
@@ -208,16 +217,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         {/* Logo */}
         <div className="flex items-center gap-3 px-5 py-5 border-b border-gray-100">
           <div
-            className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600
-            flex items-center justify-center shadow-lg shadow-indigo-200"
+            className="w-18 h-18 rounded-xl
+            flex items-center justify-center "
           >
-            <Briefcase className="w-5 h-5 text-white" />
-          </div>
-          <div>
-            <p className="text-[20px] font-extrabold text-gray-800 leading-tight">
-              Lead CRM
-            </p>
-            <p className="text-[15px] font-semibold text-gray-400">Sales Workspace</p>
+            <MCTCLogo size="md" />
           </div>
         </div>
 
@@ -268,7 +271,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
               type="button"
               onClick={() => setIsSettingsOpen(!isSettingsOpen)}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[15px] font-bold transition-all duration-150 group ${
-                location.pathname.startsWith('/settings')
+                location.pathname.startsWith("/settings")
                   ? "bg-indigo-50 text-indigo-700 dark:bg-indigo-950/20"
                   : "text-gray-500 hover:bg-gray-50 hover:text-gray-800"
               }`}
@@ -279,7 +282,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
                 </span>
                 Master Settings
               </div>
-              <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${isSettingsOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown
+                className={`w-4 h-4 transition-transform duration-200 ${isSettingsOpen ? "rotate-180" : ""}`}
+              />
             </button>
 
             {isSettingsOpen && (
@@ -320,11 +325,22 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         <div className="p-4 border-t border-gray-100 flex flex-col gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-black shadow-md select-none shrink-0">
-              {user?.name ? user.name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase() : 'U'}
+              {user?.name
+                ? user.name
+                    .split(" ")
+                    .map((n) => n[0])
+                    .slice(0, 2)
+                    .join("")
+                    .toUpperCase()
+                : "U"}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-bold text-gray-800 truncate leading-tight">{user?.name || 'User'}</p>
-              <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5">{user?.email || ''}</p>
+              <p className="text-xs font-bold text-gray-800 truncate leading-tight">
+                {user?.name || "User"}
+              </p>
+              <p className="text-[10px] text-gray-400 font-semibold truncate mt-0.5">
+                {user?.email || ""}
+              </p>
             </div>
           </div>
           <button
@@ -355,7 +371,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
             </div>
             <h3 className="text-lg font-bold text-foreground mb-2">Logout?</h3>
             <p className="text-sm text-gray-500 dark:text-zinc-400 mb-6 leading-relaxed">
-              Are you sure you want to log out of your session? You will need to log back in to access the CRM.
+              Are you sure you want to log out of your session? You will need to
+              log back in to access the CRM.
             </p>
             <div className="flex justify-end gap-2">
               <button
