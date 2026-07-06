@@ -34,6 +34,7 @@ router.post('/register', async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
+    console.error('Registration error:', err);
     res.status(500).json({ error: 'Registration failed' });
   }
 });
@@ -68,6 +69,7 @@ router.post('/login', async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
+    console.error('Login error:', err);
     res.status(500).json({ error: 'Login failed' });
   }
 });
@@ -82,6 +84,7 @@ router.get('/me', authMiddleware, async (req: Request, res: Response) => {
     }
     res.json(user);
   } catch (err) {
+    console.error('Fetch user error:', err);
     res.status(500).json({ error: 'Failed to fetch user' });
   }
 });
