@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   Users,
-  Briefcase,
   Menu,
   X,
   LogOut,

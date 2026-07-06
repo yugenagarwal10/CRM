@@ -6,7 +6,7 @@ interface MCTCLogoProps {
   size?: "sm" | "md" | "lg";
 }
 
-export default function MCTCLogo({ className = "", iconOnly = false, size = "md" }: MCTCLogoProps) {
+export default function MCTCLogo({ className = "", size = "md" }: MCTCLogoProps) {
   // Height classes for image sizing
   const heightClasses = {
     sm: "h-6",
