@@ -1,6 +1,6 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
-import { X, Upload, Check, FileSpreadsheet, Download, RefreshCw, FileText, CheckCircle2 } from 'lucide-react';
+import { X, Upload, FileSpreadsheet, Download, RefreshCw, FileText, CheckCircle2 } from 'lucide-react';
 import { useStatuses } from '../context/StatusContext';
 import { leadsApi } from '../services/api';
 import toast from 'react-hot-toast';
