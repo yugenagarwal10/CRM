@@ -4,6 +4,8 @@ import { Lead } from '../models/Lead';
 import { Referrer } from '../models/Referrer';
 import { Reminder } from '../models/Reminder';
 import { Activity } from '../models/Activity';
+import { Status } from '../models/Status';
+import { Source } from '../models/Source';
 
 const handleReferrerAssociation = async (referrerData: any): Promise<mongoose.Types.ObjectId | null> => {
   if (!referrerData || !referrerData.name || !referrerData.name.trim()) {
@@ -60,6 +62,138 @@ router.get('/:id', async (req: Request, res: Response) => {
     res.json(lead);
   } catch {
     res.status(500).json({ error: 'Failed to fetch lead' });
+  }
+});
+
+// POST /api/leads/batch
+router.post('/batch', async (req: Request, res: Response) => {
+  try {
+    const leadsData = req.body.leads;
+    if (!Array.isArray(leadsData)) {
+      return res.status(400).json({ error: 'Leads must be an array' });
+    }
+
+    let processedCount = 0;
+    for (const leadData of leadsData) {
+      if (!leadData.name || !leadData.name.trim()) {
+        continue;
+      }
+
+      // 1. Dynamic Status Check & Create
+      if (leadData.status && leadData.status.trim()) {
+        const statusName = leadData.status.trim();
+        const regex = new RegExp("^" + statusName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
+        let statusObj = await Status.findOne({ name: { $regex: regex } });
+        if (!statusObj) {
+          const lastStatus = await Status.findOne().sort({ order: -1 });
+          const order = lastStatus ? lastStatus.order + 10 : 10;
+          statusObj = new Status({
+            name: statusName,
+            color: 'indigo',
+            order,
+            type: 'standard',
+            isSystem: false
+          });
+          await statusObj.save();
+        }
+        leadData.status = statusObj.name;
+      }
+
+      // 1.5 Dynamic Source Check & Create
+      if (leadData.source && leadData.source.trim()) {
+        const sourceName = leadData.source.trim();
+        const regex = new RegExp("^" + sourceName.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
+        let sourceObj = await Source.findOne({ name: { $regex: regex } });
+        if (!sourceObj) {
+          sourceObj = new Source({
+            name: sourceName
+          });
+          await sourceObj.save();
+        }
+        leadData.source = sourceObj.name;
+      }
+
+      // 2. Lead Duplication Check & Merge/Create
+      let existingLead = null;
+      const nameRegex = new RegExp("^" + leadData.name.trim().replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + "$", "i");
+      
+      const conditions: any[] = [];
+      if (leadData.phone && String(leadData.phone).trim()) {
+        conditions.push({ phone: String(leadData.phone).trim() });
+      }
+      if (leadData.email && String(leadData.email).trim()) {
+        conditions.push({ email: String(leadData.email).trim() });
+      }
+
+      if (conditions.length > 0) {
+        existingLead = await Lead.findOne({
+          name: { $regex: nameRegex },
+          $or: conditions
+        });
+      } else {
+        existingLead = await Lead.findOne({
+          name: { $regex: nameRegex }
+        });
+      }
+
+      if (existingLead) {
+        // Merge attributes to existing lead
+        if (leadData.company && leadData.company.trim()) {
+          existingLead.company = leadData.company.trim();
+        }
+        if (leadData.email && leadData.email.trim()) {
+          existingLead.email = leadData.email.trim();
+        }
+        if (leadData.phone && leadData.phone.trim()) {
+          existingLead.phone = leadData.phone.trim();
+        }
+        if (leadData.notes && leadData.notes.trim()) {
+          existingLead.notes = existingLead.notes 
+            ? `${existingLead.notes}\n[Import Update]: ${leadData.notes.trim()}`
+            : leadData.notes.trim();
+        }
+        if (leadData.status) {
+          existingLead.status = leadData.status;
+        }
+        if (leadData.source) {
+          existingLead.source = leadData.source;
+        }
+        existingLead.lastActivityAt = new Date();
+        await existingLead.save();
+
+        const activity = new Activity({
+          leadId: existingLead._id,
+          type: 'other',
+          title: 'Lead updated via import',
+          description: `Lead details merged and updated via batch import`,
+          createdBy: (req as any).userId,
+        });
+        await activity.save();
+      } else {
+        // Create new lead
+        const referrerId = await handleReferrerAssociation(leadData.referrer);
+        const lead = new Lead({
+          ...leadData,
+          referrerId,
+        });
+        await lead.save();
+
+        const activity = new Activity({
+          leadId: lead._id,
+          type: 'lead_created',
+          title: 'Lead created via import',
+          description: `Lead registered via batch import with status: ${lead.status}`,
+          createdBy: (req as any).userId,
+        });
+        await activity.save();
+      }
+      processedCount++;
+    }
+
+    res.status(201).json({ count: processedCount });
+  } catch (err) {
+    console.error('Batch import error:', err);
+    res.status(400).json({ error: 'Failed to import leads' });
   }
 });
 

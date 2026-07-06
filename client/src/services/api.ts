@@ -80,6 +80,12 @@ export const leadsApi = {
 
   getAiFollowup: (id: string) =>
     request<{ message: string }>(`/leads/${id}/ai-followup`),
+
+  batchCreate: (leads: Partial<import('../types').Lead>[]) =>
+    request<{ count: number }>('/leads/batch', {
+      method: 'POST',
+      data: { leads },
+    }),
 };
 
 // ─── Reminders ────────────────────────────────────────────────────────────────

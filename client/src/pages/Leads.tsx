@@ -4,6 +4,7 @@ import { leadsApi } from '../services/api';
 import type { Lead, LeadStatus } from '../types';
 import StatusBadge from '../components/StatusBadge';
 import LeadForm from '../components/LeadForm';
+import ImportModal from '../components/ImportModal';
 import KanbanColumn from '../components/KanbanColumn';
 import { useStatuses } from '../context/StatusContext';
 import {
@@ -17,6 +18,7 @@ import {
   LayoutGrid,
   List,
   Eye,
+  FileSpreadsheet,
 } from 'lucide-react';
 
 type ViewMode = 'list' | 'kanban';
@@ -35,6 +37,7 @@ export default function Leads() {
   const [editing, setEditing] = useState<Partial<Lead> | undefined>();
   const [defaultStatus, setDefaultStatus] = useState<LeadStatus>('New');
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
 
   const load = async () => {
     setLoading(true);
@@ -171,6 +174,14 @@ export default function Leads() {
             </button>
           </div>
           <button
+            onClick={() => setImportOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-white text-gray-700 border border-gray-200 text-sm font-semibold rounded-xl
+              hover:bg-gray-50 shadow-sm transition-all active:scale-95"
+          >
+            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            Import from Excel
+          </button>
+          <button
             onClick={() => {
               setEditing(undefined);
               setDefaultStatus(statuses.length > 0 ? statuses[0].name : 'New');
@@ -302,6 +313,11 @@ export default function Leads() {
         initial={editing ?? { status: defaultStatus }}
         onClose={() => setFormOpen(false)}
         onSave={handleSave}
+      />
+      <ImportModal
+        open={importOpen}
+        onClose={() => setImportOpen(false)}
+        onSuccess={load}
       />
     {deleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
